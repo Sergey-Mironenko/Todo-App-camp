@@ -12,29 +12,27 @@ todosRouter.get(
 
 todosRouter.post(
   '/find',
-  middlewares.tryCatch(middlewares.validator({ id: 'string' })),
+  middlewares.tryCatch(middlewares.validator('validateId')),
   middlewares.tryCatch(middlewares.isExist('todo')),
   middlewares.tryCatch(todoController.getById.bind(todoController)),
 );
 
 todosRouter.put(
   '/create',
-  middlewares.tryCatch(middlewares.validator(
-    { title: 'string', text: 'string', userId: 'string', userName: 'string', isCompleted: 'boolean', isPrivate: 'boolean' }
-  )),
+  middlewares.tryCatch(middlewares.validator('validateCreating')),
   middlewares.tryCatch(todoController.createTodo.bind(todoController)),
 );
 
 todosRouter.patch(
   '/update',
-  middlewares.tryCatch(middlewares.validator({ id: 'string', title: 'string', isCompleted: 'boolean' })),
+  middlewares.tryCatch(middlewares.validator('validateUpdating')),
   middlewares.tryCatch(middlewares.isExist('todo')),
   middlewares.tryCatch(todoController.updateTodo.bind(todoController)),
 );
 
 todosRouter.delete(
   '/delete',
-  middlewares.tryCatch(middlewares.validator({ id: 'string' })),
+  middlewares.tryCatch(middlewares.validator('validateId')),
   middlewares.tryCatch(middlewares.isExist('todo')),
   middlewares.tryCatch(todoController.deleteTodo.bind(todoController)),
 );

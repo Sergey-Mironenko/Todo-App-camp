@@ -1,31 +1,12 @@
 import FindInDbService from '../services/findInDb.service';
-import { TodoType } from '../types/todos.type';
-import { Response, Request, NextFunction } from 'express';
+import { Response, Request, NextFunction, RequestHandler } from 'express';
+import { JoiService } from '@/services/joi.service';
 import { prismaModels } from '../types/models.type';
-import { UserType } from '../types/user.type';
-
-interface Options {
-  id?: 'string',
-  userId?: 'string',
-  userName?: 'string',
-  text?: 'string',
-  title?: 'string',
-  isPrivate?: 'boolean',
-  isCompleted?: 'boolean',
-
-  name?: 'string',
-  email?: 'string',
-  password?: 'string',
-  isActivated?: 'boolean',
-  isVerified?: 'boolean',
-  activationToken?: 'string',
-  verificationToken?: 'string',
-}
 
 export class Middlewares {
-  constructor(public findInDbService: FindInDbService) {}
+  constructor(public findInDbService: FindInDbService, public joiService: JoiService) {}
 
-  tryCatch(action: any) {
+  tryCatch(action: RequestHandler) {
 	return async function(req: Request, res: Response, next: NextFunction) {
 	  try {
 		await action(req, res, next);
@@ -35,12 +16,16 @@ export class Middlewares {
 	}
   }
 
-  validator(options: Options) {
+  validator(option: keyof JoiService) {
+	const validationSchema = this.joiService[option];
+
 	return function(req: Request, res: Response, next: NextFunction) {
-	  for (const key in options) {
-		if (!req.body[key] || (typeof req.body[key] !== options[key as keyof Options])) {
-		  res.status(400).json({ message: 'Error' });
-		}
+	  const { error } = validationSchema(req.body);
+
+	  if (error) {
+		res.status(400).json({ message: 'Error' });
+
+		return;
 	  }
 
       next();
@@ -50,9 +35,7 @@ export class Middlewares {
   isExist(model: keyof prismaModels) {
 	const findExisting = this.findInDbService.getById;
 
-	console.log(1)
 	return async function(req: Request, res: Response, next: NextFunction) {
-		console.log(2)
 	  const { id } = req.body;
 	  const entity = await findExisting(id, model);
 
@@ -72,5 +55,5 @@ export class Middlewares {
 
 };
 
-const middlewares = new Middlewares(new FindInDbService());
+const middlewares = new Middlewares(new FindInDbService(), new JoiService());
 export default middlewares;
