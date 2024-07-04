@@ -1,22 +1,23 @@
 import * as React from 'react';
 import classNames from 'classnames';
 
-import { useUsersStore } from '~store/user.store';
+import { useUsersSelector } from '~/hooks/useUsersSelector';
 import { TodoType } from '~shared/services/types';
 import { rowStyles, linkStyles } from './todoDesctop.styles';
 import { NavLink } from 'react-router-dom';
+import { ROUTER_KEYS } from '~shared/keys';
 
 type Props = {
   todo: TodoType,
 }
 
 const TodoDesctopCard: React.FunctionComponent<Props> = ({ todo }) => {
-  const user = useUsersStore(state => state.user);
+  const { user } = useUsersSelector();
 
   return (
 	  <tr
       className={classNames(
-        rowStyles(),
+        rowStyles
       )}
     >
       <th>{`${todo.userId === user.id ? 'Your' : todo.userName}'s`}</th>
@@ -26,9 +27,9 @@ const TodoDesctopCard: React.FunctionComponent<Props> = ({ todo }) => {
       <th>
         <NavLink
           className={classNames(
-            linkStyles(),
+            linkStyles
           )}
-          to={`/dashboard/${todo.id}`}
+          to={`${ROUTER_KEYS.DASHBOARD}/${todo.id}`}
         >
         </NavLink>
       </th>     

@@ -1,53 +1,60 @@
 import { css } from '@emotion/css';
 import { THEME } from '~shared/styles/theme';
 
-export const containerStyles = (row: boolean = false): string => {
-  return css`
-    display: flex;
-    flex-direction: ${row ? 'row' : 'column'};
-    gap: ${row ? '10px' : '0'};
-    margin-bottom: ${row ? '30px' : '0'};
-  `
-};
+export const containerStyles = css`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 0;
+`;
 
-export const labelStyles = (onPhone: boolean = false, onTablet: boolean = false): string => {
-  return css`
-    font-size: 20px;
-    font-weight: 500;
-    margin-bottom: 8px;
+export const rowContainerStyles = css`
+  flex-direction: row;
+  gap: 10px;
+  margin-bottom: 30px;
+`;
 
-    ${onPhone && (
-      `font-size: 14px;
-      margin-bottom: 4px;`
-    )}
+export const labelStyles = css`
+  font-size: ${THEME.labelFontSize};
+  font-weight: 500;
+  margin-bottom: 8px;
+`;
 
-    ${onTablet && (
-      `font-size: 18px;
-      margin-bottom: 6px;`
-    )}
-  `
-};
+export const tabletLabelStyles = css`
+  font-size: ${THEME.tabletlabelFontSize};
+  margin-bottom: 6px;
+`;
 
-export const inputStyles = (row: boolean = false, onPhone: boolean = false, onTablet: boolean = false, error: boolean = false): string => {
-  return css`
-    margin-bottom: ${row ? '0' : '30px'};
-    font-size: 20px;
-    font-family: ${THEME.fontFamily};
-    font-weight: 600;
-    color: ${THEME.secondaryTextColor};
-    border: 2px solid ${error ? '#CB403A' : 'rgba(0, 0, 0, 0.2)'};
-    border-radius: 3px;
-    padding: 2px 5px;
+export const phoneLabelStyles = css`
+  font-size: ${THEME.phonelabelFontSize};
+  margin-bottom: 4px;
+`;
 
-    ${onPhone && (
-      `font-size: 14px;
-      padding: 1px 2px;`
-    )}
+export const inputStyles = css`
+  margin-bottom: 30px;
+  font-size: ${THEME.labelFontSize};
+  font-family: ${THEME.fontFamily};
+  font-weight: 600;
+  color: ${THEME.secondaryTextColor};
+  border: 2px solid ${THEME.borderColor};
+  border-radius: 3px;
+  padding: 2px 5px;
+`;
 
-    ${onTablet && (
-      `font-size: 18px;
-      padding: 2px 4px;`
-    )}
-  `
-};
+export const phoneInputStyles = css`
+  font-size: ${THEME.phonelabelFontSize};
+  padding: 1px 2px;
+`;
 
+export const tabletInputStyles = css`
+  font-size: ${THEME.tabletlabelFontSize};
+  padding: 2px 4px;
+`;
+
+export const rowInputStyles = css`
+  margin-bottom: 0;
+`;
+
+export const errorInputStyles = css`
+  border: 2px solid ${THEME.errorMessageTextColor};
+`;

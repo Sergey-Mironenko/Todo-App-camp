@@ -1,6 +1,8 @@
 import * as React from 'react';
 
-import { labelStyles, inputStyles, containerStyles } from './field.styles';
+import { labelStyles, phoneLabelStyles, tabletLabelStyles,
+  inputStyles, phoneInputStyles, tabletInputStyles, rowInputStyles, errorInputStyles,
+  containerStyles, rowContainerStyles } from './field.styles';
 import classNames from 'classnames';
 
 type Props = {
@@ -36,12 +38,15 @@ const FormField: React.FunctionComponent<Props> = ({
 }) => {
   return (
     <div className={classNames(
-      containerStyles(row)
+      containerStyles,
+      { [rowContainerStyles]: row },
     )}>
       <label
         htmlFor={name}
         className={classNames(
-          labelStyles(onPhone, onTablet && !onPhone)
+          labelStyles,
+          { [phoneLabelStyles]: onPhone},
+          { [tabletLabelStyles]: onTablet && !onPhone},
         )}
       >
         {label ? label : `${name[0].toUpperCase()}${name.slice(1)}:`}
@@ -50,7 +55,11 @@ const FormField: React.FunctionComponent<Props> = ({
      {name === 'text' ? (
       <textarea
         className={classNames(
-          inputStyles(row, onPhone, onTablet && !onPhone, errors[name] ? true : false)
+          inputStyles,
+          { [rowInputStyles]: row },
+          { [phoneInputStyles]: onPhone },
+          { [tabletInputStyles]: onTablet && !onPhone },
+          { [errorInputStyles]: errors[name] ? true : false },
         )}
         type={type}
         {...register(name, { required, validate})}
@@ -62,7 +71,11 @@ const FormField: React.FunctionComponent<Props> = ({
      ) : (
       <input
         className={classNames(
-          inputStyles(row, onPhone, onTablet && !onPhone, errors[name] ? true : false)
+          inputStyles,
+          { [rowInputStyles]: row },
+          { [phoneInputStyles]: onPhone },
+          { [tabletInputStyles]: onTablet && !onPhone },
+          { [errorInputStyles]: errors[name] ? true : false },
         )}
         type={type}
         {...register(name, { required, validate})}

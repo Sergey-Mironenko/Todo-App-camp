@@ -2,9 +2,10 @@ import * as React from 'react';
 import classNames from 'classnames';
 
 import { TodoType } from '~shared/services/types';
-import { cardStyles, buttonStyles } from './todoTablet.styles';
+import { cardStyles } from './todoTablet.styles';
 import { NavLink } from 'react-router-dom';
-import { useUsersStore } from '~store/user.store';
+import { useUsersSelector } from '~/hooks/useUsersSelector';
+import { ROUTER_KEYS } from '~shared/keys';
 
 type Props = {
   onTablet: boolean,
@@ -15,13 +16,13 @@ type Props = {
 }
 
 const TodoTabletCard: React.FunctionComponent<Props> = ({ todo }) => {
-  const user = useUsersStore(state => state.user);
+  const { user } = useUsersSelector();
 
   return (
 	  <NavLink
-      to={`/dashboard/${todo.id}`}
+      to={`${ROUTER_KEYS.DASHBOARD}/${todo.id}`}
       className={classNames(
-        cardStyles()
+        cardStyles
       )}
     >
         <div>

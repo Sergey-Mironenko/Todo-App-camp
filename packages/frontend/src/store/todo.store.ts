@@ -3,18 +3,18 @@ import { TodoType } from '~shared/services/types';
 
 interface ITodoStore {
 	todos: TodoType[];
-  isLoading: boolean;
+  isTodoLoading: boolean;
   setTodos: (offset: TodoType[]) => void;
 	addTodo: (offset: TodoType) => void;
   updateTodo: (offset: TodoType) => void;
   deleteTodo: (offset: string) => void;
-  setIsLoading: (offset: boolean) => void
+  setIsTodoLoading: (offset: boolean) => void
 }
 
 export const useTodosStore = create<ITodoStore>((set) => {
   return {
     todos: [],
-    isLoading: false,
+    isTodoLoading: false,
     setTodos: (todos: TodoType[]) => {
       set((state) => {
         return {
@@ -53,9 +53,9 @@ export const useTodosStore = create<ITodoStore>((set) => {
         return { todos: newTodos };
       });
     },
-    setIsLoading: (isLoading: boolean) => {
+    setIsTodoLoading: (isTodoLoading: boolean) => {
       set((state) => {
-        return { isLoading };
+        return { isTodoLoading };
       });
     },
   };

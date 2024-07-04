@@ -6,22 +6,20 @@ import Header from '../header/header.component';
 import { AppStyles } from './app.module.styles';
 import Router from '~router/router';
 
-import { useUsersStore } from '~store/user.store';
-import { useTodosStore } from '~store/todo.store';
+import { useTodosSelector } from '~/hooks/useTodosSelector';
 
 import Loader from '~shared/components/loader/loader.component';
 
 const App: React.FunctionComponent = () => {
   const onTablet = useMediaQuery({ maxWidth: 1000 });
   const onPhone = useMediaQuery({ maxWidth: 500 });
-  const isUserLoading = useUsersStore(state => state.isLoading);
-  const areTodosLoading = useTodosStore(state => state.isLoading);
+  const { isTodoLoading } = useTodosSelector();
 
   return (
 	<main className={classNames(
-	  AppStyles()
+	  AppStyles
 	)}>
-	  {(isUserLoading || areTodosLoading) && (
+	  {(isTodoLoading) && (
 		<Loader />
 	  )}
 

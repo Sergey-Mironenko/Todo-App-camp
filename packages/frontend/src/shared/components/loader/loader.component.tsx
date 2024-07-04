@@ -6,7 +6,7 @@ import { loaderStyles } from './loader.styles';
 const Loader: React.FunctionComponent = () => {
   return (
 	<div className={classNames(
-	  loaderStyles()
+	  loaderStyles
 	)}>
 	  <div />
 	</div>

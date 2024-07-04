@@ -3,13 +3,16 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
 import todoSerivce from '~shared/services/todo.service';
-import { useTodosStore } from '~store/todo.store';
+import { useTodosSelector } from '~/hooks/useTodosSelector';
 
 import {
-  todoListStyles, titleStyles, addButtonStyles, tableContainerStyles,
-  tableStyles, tableHeadStyles, rowStyles, messageStyles,
-} from './todoList.styles';
-import { sliderPhone, swiper, slide, swiperContainer, sliderButton} from './todoListGadget.styles';
+  todoListStyles,
+  titleStyles, phoneTitleStyles,
+  addButtonStyles, phoneAddButtonStyles, tabletAddButtonStyles,
+  tableContainerStyles,
+  tableStyles, tableHeadStyles, rowStyles,
+  messageStyles, errorMessageStyles, phoneMessageStyles, tabletMessageStyles } from './todoList.styles';
+import { sliderStyles, swiperStyles, slideStyles, swiperContainerStyles, sliderButtonStyles} from './todoListGadget.styles';
 import classNames from 'classnames';
 
 import TodoPhoneCard from '../todoPhone/todoPhone.component';
@@ -17,7 +20,6 @@ import TodoTabletCard from '../todoTablet/todoTablet.component';
 import TodoDesctopCard from '../todoDesctop/todoDesctop.component';
 import { NavLink } from 'react-router-dom';
 import { ROUTER_KEYS } from '~shared/keys';
-import { useUsersStore } from '~store/user.store';
 
 type Props = {
   onTablet: boolean,
@@ -26,10 +28,7 @@ type Props = {
 
 const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
   const [editingTodoId, setEditingTodoId] = React.useState<string | null>(null);
-  const setUser = useUsersStore(state => state.setUser);
-  const todos = useTodosStore(state => state.todos);
-  const setTodos = useTodosStore(state => state.setTodos);
-  const setAreTodosLoading = useTodosStore(state => state.setIsLoading);
+  const { todos, setTodos, setIsTodoLoading } = useTodosSelector();
   const [messages, setMessages] = React.useState([]);
   const sliderRef = React.useRef(null);
 
@@ -44,7 +43,7 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
   }, []);
 
   const loadTodos = async() => {
-    setAreTodosLoading(true);
+    setIsTodoLoading(true);
     setMessages([]);
 
     try {
@@ -52,15 +51,13 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
 
       setMessages([message]);
 
-      if (message === 'Unauthorized') {
-        setUser(null);
-      } else if (todos) {
+      if (todos) {
         setTodos(todos);
       }
     } catch (error) {
       setMessages([error.message]);
     } finally {
-      setAreTodosLoading(false);
+      setIsTodoLoading(false);
     } 
   };
 
@@ -71,10 +68,11 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
   return (
 	  <>
       <div className={classNames(
-        todoListStyles()
+        todoListStyles
       )}>
         <h1 className={classNames(
-          titleStyles(onPhone)
+          titleStyles,
+          { [phoneTitleStyles]: onPhone },
         )}>
           Todos
         </h1>
@@ -82,7 +80,9 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
         <NavLink
           to={ROUTER_KEYS.ADDTODO}
           className={classNames(
-            addButtonStyles(onPhone, (onTablet && !onPhone))
+            addButtonStyles,
+            { [phoneAddButtonStyles]: onPhone },
+            { [tabletAddButtonStyles]: onTablet && !onPhone },
           )}
         >
           Lets add something to do?
@@ -92,7 +92,7 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
           <>
             {(onTablet && onPhone) && (
               <div className={classNames(
-                sliderPhone()
+                sliderStyles
               )}>
                 {todos.map(todo => (
                   <TodoPhoneCard
@@ -109,11 +109,11 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
 
             {(onTablet && !onPhone) && (
               <div className={classNames(
-                swiperContainer()
+                swiperContainerStyles
               )}>
                 <button
                   className={classNames(
-                    sliderButton(),
+                    sliderButtonStyles
                   )}
                   onClick={handlePrev}
                 >
@@ -122,7 +122,7 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
 
                 <Swiper
                   className={classNames(
-                    swiper()
+                    swiperStyles
                   )}
                   spaceBetween={0}
                   slidesPerView={1}
@@ -133,7 +133,7 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
                   
                   {todos.map(todo => (
                     <SwiperSlide key={todo.id} className={classNames(
-                      slide()
+                      slideStyles
                     )}>
                       <TodoTabletCard
                         onTablet={onTablet}
@@ -149,7 +149,7 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
 
                 <button
                   className={classNames(
-                    sliderButton(),
+                    sliderButtonStyles
                   )}
                   onClick={handleNext}
                 >
@@ -160,16 +160,16 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
 
             {(!onPhone && !onTablet) && (
               <div className={classNames(
-                tableContainerStyles()
+                tableContainerStyles
               )}>
                 <table className={classNames(
-                  tableStyles()
+                  tableStyles
                 )}>
                   <thead className={classNames(
-                    tableHeadStyles()
+                    tableHeadStyles
                   )}>
                     <tr className={classNames(
-                      rowStyles()
+                      rowStyles
                     )}>
                       <th>Name</th>
                       <th>Title</th>
@@ -195,7 +195,10 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
             return (
               (
                 <div className={classNames(
-                  messageStyles(onPhone, onTablet && ! onPhone, true)
+                  messageStyles,
+                  errorMessageStyles,
+                  { [phoneMessageStyles]: onPhone },
+                  { [tabletMessageStyles]: onTablet && ! onPhone },
                 )}>
                   {message}
                 </div>

@@ -2,11 +2,16 @@ import * as React from 'react';
 import classNames from 'classnames';
 
 import { SubmitHandler, SubmitErrorHandler, useForm } from 'react-hook-form';
-import { useUsersStore } from '~store/user.store';
-import { useTodosStore } from '~store/todo.store';
+import { useUsersSelector } from '~/hooks/useUsersSelector';
+import { useTodosSelector } from '~/hooks/useTodosSelector';
 
 import { TodoType } from '~shared/services/types';
-import { titleStyles, infoStyles, formStyles, containerStyles, buttonContainerStyles, messageStyles } from './todoInfo.styles';
+import { titleStyles, phoneTitleStyles,
+  infoStyles, phoneInfoStyles, tabletInfoStyles,
+  formStyles, phoneFormStyles, tabletFormStyles,
+  containerStyles, phoneContainerStyles, tabletContainerStyles, rowContainerStyles,
+  buttonContainerStyles, phoneButtonContainerStyles, tabletButtonContainerStyles,
+  messageStyles, phoneMessageStyles, tabletMessageStyles, errorMessageStyles } from './todoInfo.styles';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import todoSerivce from '~shared/services/todo.service';
 import { validateText, validateTitle } from '~shared/services/validation.service';
@@ -26,34 +31,27 @@ interface Form {
 };
 
 const TodoInfo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
-  const currentUser = useUsersStore(state => state.user);
-  const setUser = useUsersStore(state => state.setUser);
-  const updateTodo = useTodosStore(state => state.updateTodo);
-  const setIsTodoLoading = useTodosStore(state => state.setIsLoading);
+  const { user } = useUsersSelector();
+  const { updateTodo, setIsTodoLoading } = useTodosSelector();
   const navigate = useNavigate();
   const [todo, setTodo] = React.useState<null | TodoType>(null);
   const [isTodoEditing, setIsTodoEditing] = React.useState(false);
   const [messages, setMessages] = React.useState([]);
   const { pathname } = useLocation();
   const todoId = pathname.split('/')[2];
-  const { register, handleSubmit, clearErrors, formState: { errors } } = useForm<Form>({
-    defaultValues: {
-      title: todo?.title || '',
-      text: todo?.text || '',
-      isCompleted: todo?.isCompleted || false,
-      isPrivate: todo?.isPprivate || false,
-    },
-  });
+  const defaultValues =  {
+    title: todo?.title || '',
+    text: todo?.text || '',
+    isCompleted: todo?.isCompleted || false,
+    isPrivate: todo?.isPprivate || false,
+  };
+  const { register, handleSubmit, clearErrors, formState: { errors } } = useForm<Form>({ defaultValues });
   const getInfo = async() => {
     setMessages([]);
     setIsTodoLoading(true);
 
     try {
       const { todo, message } = await todoSerivce.getTodoById.call(todoSerivce, { id: todoId });
-
-      if (message === 'Unauthorized') {
-        setUser(null);
-      }
 
       if (!todo) {
         setMessages([message])
@@ -76,9 +74,7 @@ const TodoInfo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
 
       setMessages([message]);
 
-      if (message === 'Unauthorized') {
-        setUser(null);
-      } else if (deletedTodo) {
+      if (deletedTodo) {
         navigate(ROUTER_KEYS.DASHBOARD)
       }   
     } catch (error) {
@@ -100,9 +96,7 @@ const TodoInfo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
 
       setMessages([message]);
 
-      if (message === 'Unauthorized') {
-        setUser(null);
-      } else if (updatedTodo) {
+      if (updatedTodo) {
         setTodo(updatedTodo);
         updateTodo(updatedTodo);
       }   
@@ -116,24 +110,16 @@ const TodoInfo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
   const handleError: SubmitErrorHandler<Form> = () => {
     const errrorMessages = [];
   
-    if (errors.title) {
-      errrorMessages.push(errors.title.message);
-    }
-
-    if (errors.text) {
-      errrorMessages.push(errors.text.message);
-    }
-
-    if (errors.isCompleted) {
-      errrorMessages.push(errors.isCompleted.message);
-    }
-
-    if (errors.isPrivate) {
-      errrorMessages.push(errors.isPrivate.message);
+    for (const error in errors) {
+      errrorMessages.push(error);
     }
 
     setMessages(errrorMessages);
   };
+
+  const activateTodo = () => setIsTodoEditing(true);
+
+  const deactivateTodo = () => setIsTodoEditing(false);
 
   React.useEffect(() => {
     getInfo();
@@ -145,7 +131,8 @@ const TodoInfo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
         <>
           <h1
             className={classNames(
-              titleStyles(onPhone, onTablet && ! onPhone)
+              titleStyles,
+              { [phoneTitleStyles]: onPhone },
             )}
           >
             {`${todo.userName}'s todo`}
@@ -153,44 +140,58 @@ const TodoInfo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
 
           {!isTodoEditing ? (
             <div className={classNames(
-              infoStyles(onPhone, onTablet && ! onPhone)
+              infoStyles,
+              { [phoneInfoStyles]: onPhone },
+              { [tabletInfoStyles]: onTablet && ! onPhone },
             )}>
               <div className={classNames(
-                containerStyles(false, onPhone, onTablet && ! onPhone)
+                containerStyles,
+                { [phoneContainerStyles]: onPhone },
+                { [tabletContainerStyles]: onTablet && ! onPhone },
               )}>
                 <span>Title:</span>
                 <div>{todo.title}</div>
               </div>
 
               <div className={classNames(
-                containerStyles(false, onPhone, onTablet && ! onPhone)
+                containerStyles,
+                { [phoneContainerStyles]: onPhone },
+                { [tabletContainerStyles]: onTablet && ! onPhone },
               )}>
                 <span>Text:</span>
                 <div>{todo.text}</div>
               </div>
 
               <div className={classNames(
-                containerStyles(true, onPhone, onTablet && ! onPhone)
+                containerStyles,
+                rowContainerStyles,
+                { [phoneContainerStyles]: onPhone },
+                { [tabletContainerStyles]: onTablet && ! onPhone },
               )}>
                 <span>Completed:</span>
                 <input type="checkbox" checked={todo.isCompleted} disabled/>
               </div>
 
               <div className={classNames(
-                containerStyles(true, onPhone, onTablet && ! onPhone)
+                containerStyles,
+                rowContainerStyles,
+                { [phoneContainerStyles]: onPhone },
+                { [tabletContainerStyles]: onTablet && ! onPhone },
               )}>
                 <span>Private:</span>
                 <input type="checkbox" checked={todo.isPprivate} disabled/>
               </div>
 
               <div className={classNames(
-                buttonContainerStyles(onPhone, onTablet && ! onPhone)
+                buttonContainerStyles,
+                { [phoneButtonContainerStyles]: onPhone },
+                { [tabletButtonContainerStyles]: onTablet && ! onPhone },
               )}>
-                {currentUser.id === todo.userId && (
+                {user.id === todo.userId && (
                   <>
                     <button
                       type="button"
-                      onClick={() => setIsTodoEditing(false)}
+                      onClick={activateTodo}
                     >
                       Edit
                     </button>
@@ -210,7 +211,9 @@ const TodoInfo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
           ) : (
             <form
               className={classNames(
-                formStyles(onPhone, onTablet && ! onPhone)
+                formStyles,
+                { [phoneFormStyles]: onPhone },
+                { [tabletFormStyles]: onTablet && ! onPhone },
               )}
               onSubmit={handleSubmit(handleUpdate, handleError)}
             >
@@ -271,13 +274,15 @@ const TodoInfo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
               />
 
               <div className={classNames(
-                buttonContainerStyles(onPhone, onTablet && ! onPhone)
+                buttonContainerStyles,
+                { [phoneButtonContainerStyles]: onPhone },
+                { [tabletButtonContainerStyles]: onTablet && ! onPhone },
               )}>
                 <button type="submit">Submit</button>
 
                 <button
                   type="button"
-                  onClick={() => setIsTodoEditing(false)}
+                  onClick={deactivateTodo}
                 >
                   Cancel
                 </button>             
@@ -293,7 +298,10 @@ const TodoInfo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
             return (
               (
                 <div className={classNames(
-                  messageStyles(onPhone, onTablet && ! onPhone, message !== 'Successfully updated')
+                  messageStyles,
+                  { [phoneMessageStyles]: onPhone },
+                  { [tabletMessageStyles]: onTablet && ! onPhone },
+                  { [errorMessageStyles]: message !== 'Successfully updated' },
                 )}>
                   {message}
                 </div>

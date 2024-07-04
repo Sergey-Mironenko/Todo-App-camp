@@ -2,10 +2,10 @@ import * as React from 'react';
 import classNames from 'classnames';
 
 import { SubmitHandler, SubmitErrorHandler, useForm } from 'react-hook-form';
-import { useUsersStore } from '~store/user.store';
-import { useTodosStore } from '~store/todo.store';
+import { useUsersSelector } from '~/hooks/useUsersSelector';
+import { useTodosSelector } from '~/hooks/useTodosSelector';
 
-import { titleStyles, formStyles, messageStyles } from './addTodo.styles';
+import { titleStyles, phoneTitleStyles, formStyles, tabletFormStyles, phoneFormStyles, messageStyles, errorMessageStyles, phoneMessageStyles, tabletMessageStyles } from './addTodo.styles';
 import todoSerivce from '~shared/services/todo.service';
 import FormField from '~shared/components/field/field.component';
 import { validateTitle, validateText } from '~shared/services/validation.service';
@@ -23,19 +23,16 @@ interface Form {
 };
 
 const AddTodo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
-  const user = useUsersStore(state => state.user);
-  const setUser = useUsersStore(state => state.setUser);
-  const addTodo = useTodosStore(state => state.addTodo);
-  const setIsTodoLoading = useTodosStore(state => state.setIsLoading);
+  const { user } = useUsersSelector();
+  const { addTodo, setIsTodoLoading } = useTodosSelector();
   const [messages, setMessages] = React.useState([]);
-  const { register, handleSubmit, clearErrors, formState: { errors } } = useForm<Form>({
-    defaultValues: {
-      title: '',
-      text: '',
-      isCompleted: false,
-      isPrivate: false,
-    },
-  });
+  const defaultValues = {
+    title: '',
+    text: '',
+    isCompleted: false,
+    isPrivate: false,
+  }; 
+  const { register, handleSubmit, clearErrors, formState: { errors } } = useForm<Form>({ defaultValues });
 
   const handleAdd: SubmitHandler<Form> = async(data) => {
     setMessages([]);
@@ -49,9 +46,7 @@ const AddTodo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
 
       setMessages([message]);
 
-      if (message === 'Unauthorized') {
-        setUser(null);
-      } else if (newTodo) {
+      if (newTodo) {
         addTodo(newTodo);
       }   
     } catch (error) {
@@ -63,21 +58,9 @@ const AddTodo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
 
   const handleError: SubmitErrorHandler<Form> = () => {
     const errrorMessages = [];
-  
-    if (errors.title) {
-      errrorMessages.push(errors.title.message);
-    }
 
-    if (errors.text) {
-      errrorMessages.push(errors.text.message);
-    }
-
-    if (errors.isCompleted) {
-      errrorMessages.push(errors.isCompleted.message);
-    }
-
-    if (errors.isPrivate) {
-      errrorMessages.push(errors.isPrivate.message);
+    for (const error in errors) {
+      errrorMessages.push(error);
     }
 
     setMessages(errrorMessages);
@@ -87,7 +70,8 @@ const AddTodo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
 	  <>
       <h1
         className={classNames(
-            titleStyles()
+          titleStyles,
+          { [phoneTitleStyles]: onPhone }
         )}
       >
         Add todo
@@ -95,7 +79,9 @@ const AddTodo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
 
       <form
         className={classNames(
-          formStyles(onPhone, onTablet && ! onPhone)
+          formStyles,
+          { [phoneFormStyles]: onPhone },
+          { [tabletFormStyles]: onTablet && ! onPhone },
         )}
         onSubmit={handleSubmit(handleAdd, handleError)}
       >
@@ -162,7 +148,10 @@ const AddTodo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
             return (
               (
                 <div className={classNames(
-                  messageStyles(onPhone, onTablet && ! onPhone, message !== 'Successfully added')
+                  messageStyles,
+                  { [phoneMessageStyles]: onPhone },
+                  { [tabletMessageStyles]: onTablet && ! onPhone },
+                  { [errorMessageStyles]: message !== 'Successfully updated' },
                 )}>
                   {message}
                 </div>

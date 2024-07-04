@@ -1,10 +1,12 @@
 import * as React from 'react';
 
-import { HeaderStyles, containerStyles, buttonContainerStyles, logoStyles, buttonStyles } from './header.styles';
+import { headerStyles, phoneHeaderStyles, containerStyles, phoneContainerStyles,
+  buttonContainerStyles, phoneButtonContainerStyles, logoStyles, phoneLogoStyles,
+  buttonStyles, phoneButtonStyles, activeButtonStyles } from './header.styles';
 import classNames from 'classnames';
 import { NavLink } from 'react-router-dom';
 
-import { useUsersStore } from '~store/user.store';
+import { useUsersSelector } from '~/hooks/useUsersSelector';
 import { ROUTER_KEYS } from '~shared/keys';
 
 type Props = {
@@ -13,43 +15,47 @@ type Props = {
 }
 
 const Header: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
-  const user = useUsersStore(state => state.user);
-  const setUser = useUsersStore(state => state.setUser);
+  const { user } = useUsersSelector();
 
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    setUser(null);
-  }
+  const handleLogout = () => {}
 
   return (
 	<header className={classNames(
-      HeaderStyles(onPhone)
+      headerStyles,
+      { [phoneHeaderStyles]: onPhone },
 	)}>
       <div className={classNames(
-        containerStyles(onPhone)
+        containerStyles,
+        { [phoneContainerStyles]: onPhone },
       )}>
         <div className={classNames(
-          logoStyles(onPhone)
+          logoStyles,
+          { [phoneLogoStyles]: onPhone },
         )}>
           Todo App
         </div>
         <div className={classNames(
-          buttonContainerStyles(onPhone)
+          buttonContainerStyles,
+          { [phoneButtonContainerStyles]: onPhone },
         )}>
           {!user ? (
             <>
               <NavLink
-                to={ROUTER_KEYS.LOGIN}
+                to={ROUTER_KEYS.ALL_MATCH}
                 className={({ isActive }) => classNames(
-                  buttonStyles(onPhone, isActive)
+                  buttonStyles,
+                  { [phoneButtonStyles]: onPhone },
+                  { [activeButtonStyles]: isActive },
                 )}
               >
                 Log in
               </NavLink>
               <NavLink
-                to={ROUTER_KEYS.REGISTRATION}
+                to={ROUTER_KEYS.ALL_MATCH}
                 className={({ isActive }) => classNames(
-                  buttonStyles(onPhone, isActive)
+                  buttonStyles,
+                  { [phoneButtonStyles]: onPhone },
+                  { [activeButtonStyles]: isActive },
                 )}
               >
                 Register
@@ -59,16 +65,19 @@ const Header: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
             <>
               <button
                 className={classNames(
-                  buttonStyles(onPhone)
+                  buttonStyles,
+                  { [phoneButtonStyles]: onPhone },
                 )}
                 onClick={handleLogout}
               >
                 Log out
               </button>
               <NavLink
-                to={ROUTER_KEYS.PROFILE}
+                to={ROUTER_KEYS.ALL_MATCH}
                 className={({ isActive }) => classNames(
-                  buttonStyles(onPhone, isActive)
+                  buttonStyles,
+                  { [phoneButtonStyles]: onPhone },
+                  { [activeButtonStyles]: isActive },
                 )}
               >
                 Profile

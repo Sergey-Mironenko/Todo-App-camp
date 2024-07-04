@@ -1,77 +1,92 @@
 import { css } from '@emotion/css';
 import { THEME } from '~shared/styles/theme';
 
-export const HeaderStyles = (onPhone: boolean = false): string => {
-  return css`
-    width: 100%;
-    height: ${onPhone ? '40px' : '60px'};
-    background: ${THEME.baseColor};
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
-    0 25px 50px 0 rgba(0, 0, 0, 0.1);
-    margin: ${onPhone ? THEME.header.gadgetMargin : THEME.header.desctopMargin};
-  `;
-};
+export const headerStyles = css`
+  width: 100%;
+  height: ${THEME.titleFontSize};
+  background: ${THEME.baseColor};
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
+  0 25px 50px 0 rgba(0, 0, 0, 0.1);
+  margin: ${THEME.header.desctopMargin};
+`;
 
-export const containerStyles = (onPhone: boolean = false): string => {
-  return css`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-sizing: border-box;
-    padding: ${onPhone ? '0 5px' : '0 25px'};
-    width: 100%;
-    height: 100%;
-  `;
-};
+export const phoneHeaderStyles = css`
+  height: 40px;
+  margin: ${THEME.header.gadgetMargin};
+`
 
-export const buttonContainerStyles = (onPhone: boolean = false): string => {
-  return css`
-    display: flex;
-    gap: ${onPhone ? THEME.header.gadgetButtonGap : THEME.header.desctopButtonGap};
-  `;
-};
+export const containerStyles = css`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 0 25px;
+  width: 100%;
+  height: 100%;
+`;
 
-export const logoStyles = (onPhone: boolean = false): string => {
-  return css`
-    font-size: ${onPhone ? THEME.header.logoGadgetFontSize : THEME.header.logoDesctopFontSize};
-    color: ${THEME.primaryTextColor}; 
-  `;
-};
+export const phoneContainerStyles = css`
+  padding: 0 5px;
+`
 
-export const buttonStyles = (onPhone: boolean = false, isActive: boolean = false): string => {
-  return css`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: ${THEME.fontFamily};
-    font-weight: ${THEME.secondaryFontWeight};
-    font-size: ${onPhone ? THEME.header.buttonGadgetFontSize : THEME.header.bttonDesctopFontSize};
-    height: ${onPhone ? '30px' : '35px'};
-    width: ${onPhone ? '60px' : '90px'};
+export const buttonContainerStyles = css`
+  display: flex;
+  gap: ${THEME.header.desctopButtonGap};
+`;
+
+export const phoneButtonContainerStyles = css`
+  gap: ${THEME.header.gadgetButtonGap};
+`;
+
+export const logoStyles = css`
+  font-size: ${THEME.header.logoDesctopFontSize};
+  color: ${THEME.primaryTextColor}; 
+`;
+
+export const phoneLogoStyles = css`
+  font-size: ${THEME.header.logoGadgetFontSize};
+`;
+
+export const buttonStyles = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: ${THEME.fontFamily};
+  font-weight: ${THEME.secondaryFontWeight};
+  font-size: ${THEME.header.bttonDesctopFontSize};
+  height: 35px;
+  width: 90px;
+  color: ${THEME.secondaryTextColor};
+  background: ${THEME.baseColor};
+  box-shadow: 0 1px 2px 0 ${THEME.shadowColor},
+  0 2px 5px 0 ${THEME.borderColor};
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-underline: none;
+  outline: none;
+
+  transition: box-shadow 0.3s;
+
+  &:hover {
+    box-shadow: 0 1px 2px 0 ${THEME.shadowColor},
+    0 2px 5px 0 ${THEME.borderColor};
+    text-decoration: none;
     color: ${THEME.secondaryTextColor};
-    background: ${THEME.baseColor};
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2),
-    0 2px 5px 0 rgba(0, 0, 0, 0.1);
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-underline: none;
-    outline: none;
-    
-    transition: box-shadow 0.3s;
+  }
+`;
 
-    &:hover {
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.4),
-      0 2px 5px 0 rgba(0, 0, 0, 0.2);
-      text-decoration: none;
-      color: ${THEME.secondaryTextColor};
-    }
+export const phoneButtonStyles = css`
+  font-size: ${THEME.header.buttonGadgetFontSize};
+  height: 30px;
+  width: 60px;
+`;
 
-    ${isActive && (
-      `box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.4),
-      0 2px 5px 0 rgba(0, 0, 0, 0.2);
-      text-decoration: none;
-      color: ${THEME.secondaryTextColor}`
-    )}
-  `;
-};
+export const activeButtonStyles = css`
+  &:hover {
+    box-shadow: 0 1px 2px 0 ${THEME.shadowColor},
+    0 2px 5px 0 ${THEME.borderColor};
+    text-decoration: none;
+    color: ${THEME.secondaryTextColor}
+  }
+`;
