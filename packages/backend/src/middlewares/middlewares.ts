@@ -76,9 +76,9 @@ export class Middlewares {
 
 			return;
 		  }
-
-		  next();
 		})
+
+		next();
 	  })
 	}
   }
