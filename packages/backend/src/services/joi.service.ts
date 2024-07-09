@@ -34,4 +34,28 @@ export class JoiService {
 
     return updatingSchema.validate(data);
   }
+
+  public validateName = (data: Request[keyof Request]) => {
+    const emailSchema = Joi.object({
+      id: Joi.string().min(1).max(14).pattern(/^[a-zA-ZА-Яа-яЁё]*$/).required(), 
+    });
+
+    return emailSchema.validate(data);
+  }
+
+  public validateEmail = (data: Request[keyof Request]) => {
+    const emailSchema = Joi.object({
+      id: Joi.string().min(1).email().required(), 
+    });
+
+    return emailSchema.validate(data);
+  }
+
+  public validatePassword = (data: Request[keyof Request]) => {
+    const passwordSchema = Joi.object({
+      id: Joi.string().min(8).max(20).pattern(/^[a-zA-Z0-9]*$/).required(), 
+    });
+
+    return passwordSchema.validate(data);
+  }
 };
