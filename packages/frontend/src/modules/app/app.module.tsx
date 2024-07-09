@@ -7,6 +7,7 @@ import { AppStyles } from './app.module.styles';
 import Router from '~router/router';
 
 import { useTodosSelector } from '~/hooks/useTodosSelector';
+import { useUsersSelector } from '~/hooks/useUsersSelector';
 
 import Loader from '~shared/components/loader/loader.component';
 
@@ -14,12 +15,13 @@ const App: React.FunctionComponent = () => {
   const onTablet = useMediaQuery({ maxWidth: 1000 });
   const onPhone = useMediaQuery({ maxWidth: 500 });
   const { isTodoLoading } = useTodosSelector();
+  const { isUserLoading } = useUsersSelector();
 
   return (
 	<main className={classNames(
 	  AppStyles
 	)}>
-	  {(isTodoLoading) && (
+	  {(isTodoLoading || isUserLoading) && (
 		<Loader />
 	  )}
 

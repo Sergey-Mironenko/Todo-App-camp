@@ -15,9 +15,11 @@ type Props = {
 }
 
 const Header: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
-  const { user } = useUsersSelector();
+  const { user, setUser } = useUsersSelector();
 
-  const handleLogout = () => {}
+  const handleLogout = () => {
+    setUser(null);
+  }
 
   return (
 	<header className={classNames(

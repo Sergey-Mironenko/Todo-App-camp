@@ -6,7 +6,7 @@ import { useUsersSelector } from '~/hooks/useUsersSelector';
 import { useTodosSelector } from '~/hooks/useTodosSelector';
 
 import { titleStyles, phoneTitleStyles, formStyles, tabletFormStyles, phoneFormStyles, messageStyles, errorMessageStyles, phoneMessageStyles, tabletMessageStyles } from './addTodo.styles';
-import todoSerivce from '~shared/services/todo.service';
+import TodoService from '~shared/services/todo.service';
 import FormField from '~shared/components/field/field.component';
 import { validateTitle, validateText } from '~shared/services/validation.service';
 
@@ -23,8 +23,9 @@ interface Form {
 };
 
 const AddTodo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
-  const { user } = useUsersSelector();
+  const { user, setUser } = useUsersSelector();
   const { addTodo, setIsTodoLoading } = useTodosSelector();
+  const todoService = new TodoService(setUser);
   const [messages, setMessages] = React.useState([]);
   const defaultValues = {
     title: '',
@@ -39,8 +40,8 @@ const AddTodo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
     setIsTodoLoading(true);
 
     try {
-      const { newTodo, message } = await todoSerivce.createTodo.call(
-        todoSerivce,
+      const { newTodo, message } = await todoService.createTodo.call(
+        todoService,
         { title: data.title, text: data.text, userId: user.id, userName: user.name, isCompleted: data.isCompleted, isPrivate: data.isPrivate },
       );
 
