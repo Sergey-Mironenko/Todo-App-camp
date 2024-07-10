@@ -14,8 +14,13 @@ import Loader from '~shared/components/loader/loader.component';
 const App: React.FunctionComponent = () => {
   const onTablet = useMediaQuery({ maxWidth: 1000 });
   const onPhone = useMediaQuery({ maxWidth: 500 });
-  const { isTodoLoading } = useTodosSelector();
-  const { isUserLoading } = useUsersSelector();
+  const { isTodoLoading, setIsTodoLoading } = useTodosSelector();
+  const { isUserLoading, setIsUserLoading } = useUsersSelector();
+
+  React.useEffect(() => {
+	setIsTodoLoading(false);
+	setIsUserLoading(false);
+  }, []);
 
   return (
 	<main className={classNames(

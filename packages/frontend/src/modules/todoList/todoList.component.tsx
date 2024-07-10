@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
-import TodoService from '~shared/services/todo.service';
-import { useUsersSelector } from '~/hooks/useUsersSelector';
+import { todoService } from '~shared/services/todo.service';
 import { useTodosSelector } from '~/hooks/useTodosSelector';
 
 import {
@@ -29,9 +28,7 @@ type Props = {
 
 const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
   const [editingTodoId, setEditingTodoId] = React.useState<string | null>(null);
-  const { setUser } = useUsersSelector();
   const { todos, setTodos, setIsTodoLoading } = useTodosSelector();
-  const todoService = new TodoService(setUser);
   const [messages, setMessages] = React.useState([]);
   const sliderRef = React.useRef(null);
 

@@ -1,18 +1,18 @@
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { STORAGE_KEYS } from '~shared/keys';
+import { useUsersStore } from '../../store/user.store';
 
 export class HttpSerivce {
-  constructor(private baseUrl = "http://localhost:3030", public fetchingService = axios, private apiVersion = 'api') {
+  constructor(private baseUrl = process.env.SERVER_URL, public fetchingService = axios, private apiVersion = 'api') {
     this.baseUrl = baseUrl;
     this.fetchingService = axios;
     this.apiVersion = apiVersion
   }
 
-  public interceptors(setUser) {
-    function onResponse(response: any) {
-      console.log('response')
-      if (response.message === 'Unauthorized') {
-        setUser(null);
+  public interceptors() {
+    function onResponse(response: AxiosResponse) {
+      if (response.data.message === 'Unauthorized') {
+        useUsersStore.getState().setUser(null)
 
         return;
       }
@@ -20,12 +20,9 @@ export class HttpSerivce {
       return response;
     };
     
-    async function onResponseError(error: any) {
-      console.log('response')
-      if (error.response  && (
-        error.response.status === 401
-        || error.response.message === 'Unauthorized')) {
-          setUser(null);
+    async function onResponseError(error: AxiosError) {
+      if (error.response  && error.response.status === 401) {
+        useUsersStore.getState().setUser(null)
       }
 
       throw error;

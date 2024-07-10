@@ -24,11 +24,11 @@ interface Form {
 const Registration: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
   const { setIsUserLoading } = useUsersSelector();
   const [messages, setMessages] = React.useState([]);
-  const defaultValues = {
+  const defaultValues = React.useMemo(() => ({
     name: '',
     email: '',
     password: '',
-  };
+  }), []);
   const { register, handleSubmit, clearErrors, formState: { errors } } = useForm<Form>({
     defaultValues,
   });

@@ -26,10 +26,10 @@ const Reset: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
   const { pathname } = useLocation();
   const verificationToken = pathname.split('/')[2];
   const [messages, setMessages] = React.useState([]);
-  const defaultValues = {
+  const defaultValues = React.useMemo(() => ({
     repeatedPassword: '',
     password: '',
-  };
+  }), []);
   const { register, handleSubmit, setError, clearErrors, formState: { errors } } = useForm<Form>({
     defaultValues,
   });

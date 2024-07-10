@@ -1,13 +1,12 @@
 import { HttpSerivce } from './http.service';
 
 class TodoService extends HttpSerivce {
-  constructor(public setUser) {
+  constructor() {
     super();
-    this.setUser = setUser; 
   }
 
   async getAllTodos(fields, query = '') {
-    this.interceptors(this.setUser);
+    this.interceptors();
 
     const response = await this.post({
       url: query ? `api/todos/filter?${query}` : 'api/todos/all',
@@ -18,7 +17,7 @@ class TodoService extends HttpSerivce {
   }
 
   async getTodoById(fields) {
-    this.interceptors(this.setUser);
+    this.interceptors();
 
     const response = await this.post({
       url: 'api/todos/find',
@@ -29,7 +28,7 @@ class TodoService extends HttpSerivce {
   }
 
   async createTodo(fields) {
-    this.interceptors(this.setUser);
+    this.interceptors();
 
     const response = await this.put({
       url: 'api/todos/create',
@@ -40,7 +39,7 @@ class TodoService extends HttpSerivce {
   }
 
   async updateTodo(fields) {
-    this.interceptors(this.setUser);
+    this.interceptors();
 
     const response = await this.patch({
       url: 'api/todos/update',
@@ -51,7 +50,7 @@ class TodoService extends HttpSerivce {
   }
 
   async deleteTodo(fields) {
-    this.interceptors(this.setUser);
+    this.interceptors();
     
     const response = await this.delete({
       url: 'api/todos/delete',
@@ -62,4 +61,5 @@ class TodoService extends HttpSerivce {
   }
 }
 
+export const todoService = new TodoService();
 export default TodoService;

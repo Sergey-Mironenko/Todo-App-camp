@@ -4,7 +4,7 @@ import { formStyles, phoneFormStyles, tabletFormStyles,
   messageStyles, errorMessageStyles, phoneMessageStyles, tabletMessageStyles } from './changeName.styles';
 import { SubmitHandler, SubmitErrorHandler, useForm } from 'react-hook-form';
 
-import UserService from '~shared/services/user.service';
+import { userService } from '~shared/services/user.service';
 import { useUsersSelector } from '~/hooks/useUsersSelector';
 import { validatePassword } from '~shared/services/validation.service';
 
@@ -23,11 +23,10 @@ interface Form {
 
 const ChangeName: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
   const { user, setUser, setIsUserLoading } = useUsersSelector();
-  const userService = new UserService(setUser);
   const [messages, setMessages] = React.useState([]);
-  const defaultValues = {
+  const defaultValues = React.useMemo(() => ({
     name: '',
-  };
+  }), []);
   const { register, handleSubmit, clearErrors, formState: { errors } } = useForm<Form>({
     defaultValues,
   });

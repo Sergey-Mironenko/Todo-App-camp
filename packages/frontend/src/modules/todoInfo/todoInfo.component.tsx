@@ -13,7 +13,7 @@ import { titleStyles, phoneTitleStyles,
   buttonContainerStyles, phoneButtonContainerStyles, tabletButtonContainerStyles,
   messageStyles, phoneMessageStyles, tabletMessageStyles, errorMessageStyles } from './todoInfo.styles';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import TodoService from '~shared/services/todo.service';
+import { todoService } from '~shared/services/todo.service';
 import { validateText, validateTitle } from '~shared/services/validation.service';
 import FormField from '~shared/components/field/field.component';
 import { ROUTER_KEYS } from '~shared/keys';
@@ -31,21 +31,20 @@ interface Form {
 };
 
 const TodoInfo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
-  const { user, setUser } = useUsersSelector();
+  const { user } = useUsersSelector();
   const { updateTodo, setIsTodoLoading } = useTodosSelector();
-  const todoService = new TodoService(setUser);
   const navigate = useNavigate();
   const [todo, setTodo] = React.useState<null | TodoType>(null);
   const [isTodoEditing, setIsTodoEditing] = React.useState(false);
   const [messages, setMessages] = React.useState([]);
   const { pathname } = useLocation();
   const todoId = pathname.split('/')[2];
-  const defaultValues =  {
+  const defaultValues = React.useMemo(() => ({
     title: todo?.title || '',
     text: todo?.text || '',
     isCompleted: todo?.isCompleted || false,
     isPrivate: todo?.isPprivate || false,
-  };
+  }), []);
   const { register, handleSubmit, clearErrors, formState: { errors } } = useForm<Form>({ defaultValues });
   const getInfo = async() => {
     setMessages([]);

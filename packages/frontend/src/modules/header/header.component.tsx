@@ -43,7 +43,7 @@ const Header: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
           {!user ? (
             <>
               <NavLink
-                to={ROUTER_KEYS.ALL_MATCH}
+                to={ROUTER_KEYS.LOGIN}
                 className={({ isActive }) => classNames(
                   buttonStyles,
                   { [phoneButtonStyles]: onPhone },
@@ -53,7 +53,7 @@ const Header: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
                 Log in
               </NavLink>
               <NavLink
-                to={ROUTER_KEYS.ALL_MATCH}
+                to={ROUTER_KEYS.REGISTRATION}
                 className={({ isActive }) => classNames(
                   buttonStyles,
                   { [phoneButtonStyles]: onPhone },
@@ -75,7 +75,7 @@ const Header: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
                 Log out
               </button>
               <NavLink
-                to={ROUTER_KEYS.ALL_MATCH}
+                to={ROUTER_KEYS.PROFILE}
                 className={({ isActive }) => classNames(
                   buttonStyles,
                   { [phoneButtonStyles]: onPhone },

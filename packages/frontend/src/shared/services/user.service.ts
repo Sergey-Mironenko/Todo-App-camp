@@ -1,14 +1,13 @@
 import { HttpSerivce } from './http.service';
 
 class UserService extends HttpSerivce {
-  constructor(public setUser = {}) {
+  constructor() {
     super();
-    this.setUser = setUser; 
   }
 
   async loginUser(fields) {
     const response = await this.post({
-      url: 'api/user/login',
+      url: 'api/user/auth',
       data: {...fields},
     });
 
@@ -51,7 +50,7 @@ class UserService extends HttpSerivce {
   }
 
   async changeData(fields) {
-    this.interceptors(this.setUser);
+    this.interceptors();
 
     const response = await this.post({
       url: 'api/user/update',
