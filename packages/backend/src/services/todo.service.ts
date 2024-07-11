@@ -27,6 +27,24 @@ export default class TodoService {
 	  return null;
   }
 
+  async findFiltered(id: string, query: string, status?: boolean | null, privacy?: boolean | null): Promise<TodoType[] | null> {
+	let todos = await this.findAll(id);
+
+	if (todos) {
+	  if (status !== null) {
+		todos = todos.filter(todo => todo.isCompleted === status);
+	  }
+
+	  if (privacy) {
+		todos = todos.filter(todo => todo.isPprivate === privacy)
+	  }
+
+	  return todos.filter(todo => todo.title.toLowerCase().includes(query.toLowerCase()));
+	}
+	  
+	return null;
+  }
+
   async getById(id: string): Promise<TodoType | null> {
 	const todo = await prisma.todo.findUnique({
 	  where: {

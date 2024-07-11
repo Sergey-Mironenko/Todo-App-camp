@@ -18,4 +18,15 @@ export interface UserType {
   isVerified: boolean,
   isActivated: boolean,
 };
+
+export enum Status {
+  completed = 'completed',
+  active = 'active',
+};
+
+export enum Privacy {
+  private = 'private',
+  public = 'public',
+};
+
   

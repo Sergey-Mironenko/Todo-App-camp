@@ -46,16 +46,6 @@ export class UserController {
 
     const { accessToken } = this.jwtService.sign(activatedUser as UserType);
 
-    if (activatedUser) {
-      req.logIn(activatedUser, function(err) {
-        if (err) {
-          res.status(401).json({ message: 'Error while logging in' })
-    
-          return;
-        }
-      })
-    }
-
     res.send({
       message: 'Activated',
       user: activatedUser,
@@ -64,30 +54,12 @@ export class UserController {
   }
 
   async loginUser(req: Request, res: Response): Promise<void> {
-    const { email, password } = req.body;
+    const { email } = req.params;
 
     const user = await this.userService.getByEmail(email);
 
-    if (!user) {
-      res.json({ message: 'Wrong email'}).status(401);
-
-      return;
-    }
-
-    if (user.password !== password) {
-      res.json({ message: 'Wrong password' }).status(401);
-
-      return;
-    }
-
-    if (!user.isActivated) {
-      res.json({ message: 'Activate your account firs' }).status(401);
-
-      return;
-    }
-
     const { accessToken } = await this.jwtService.sign(user as UserType);
-
+    
     res.status(200);
     res.send({
       message: 'Loged in',

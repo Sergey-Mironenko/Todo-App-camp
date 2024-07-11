@@ -1,6 +1,6 @@
 import passport from 'passport';
 import Strategy from 'passport-local';
-import prisma from '@/utils/db';
+import prisma from '../utils/db';
 
 const LocalStrategy = Strategy.Strategy
 

@@ -4,6 +4,7 @@ import 'swiper/css';
 
 import { todoService } from '~shared/services/todo.service';
 import { useTodosSelector } from '~/hooks/useTodosSelector';
+import { useUsersSelector } from '~/hooks/useUsersSelector';
 
 import {
   todoListStyles,
@@ -18,8 +19,9 @@ import classNames from 'classnames';
 import TodoPhoneCard from '../todoPhone/todoPhone.component';
 import TodoTabletCard from '../todoTablet/todoTablet.component';
 import TodoDesctopCard from '../todoDesctop/todoDesctop.component';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { ROUTER_KEYS } from '~shared/keys';
+import Filter from '~modules/filter/filter.component';
 
 type Props = {
   onTablet: boolean,
@@ -28,9 +30,11 @@ type Props = {
 
 const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
   const [editingTodoId, setEditingTodoId] = React.useState<string | null>(null);
+  const { user } = useUsersSelector();
   const { todos, setTodos, setIsTodoLoading } = useTodosSelector();
   const [messages, setMessages] = React.useState([]);
   const sliderRef = React.useRef(null);
+  const { search } = useLocation();
 
   const handlePrev = React.useCallback(() => {
     if (!sliderRef.current) return;
@@ -47,7 +51,7 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
     setMessages([]);
 
     try {
-      const { todos, message } = await todoService.getAllTodos.call(todoService);
+      const { todos, message } = await todoService.getAllTodos.call(todoService, { id: user.id }, search && `${search.slice(1)}`);
 
       setMessages([message]);
 
@@ -63,7 +67,7 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
 
   React.useEffect(() => {
     loadTodos();
-  }, []);
+  }, [search]);
 
   return (
 	  <>
@@ -87,6 +91,8 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
         >
           Lets add something to do?
         </NavLink>
+
+        <Filter onPhone={onPhone} onTablet={onTablet && !onPhone} />
 
         {todos.length > 0 && (
           <>
