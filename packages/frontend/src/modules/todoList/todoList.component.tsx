@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
-import todoSerivce from '~shared/services/todo.service';
+import { todoService } from '~shared/services/todo.service';
 import { useTodosSelector } from '~/hooks/useTodosSelector';
 
 import {
@@ -47,7 +47,7 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
     setMessages([]);
 
     try {
-      const { todos, message } = await todoSerivce.getAllTodos.call(todoSerivce);
+      const { todos, message } = await todoService.getAllTodos.call(todoService);
 
       setMessages([message]);
 

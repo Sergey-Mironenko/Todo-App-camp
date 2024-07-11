@@ -13,7 +13,7 @@ import { titleStyles, phoneTitleStyles,
   buttonContainerStyles, phoneButtonContainerStyles, tabletButtonContainerStyles,
   messageStyles, phoneMessageStyles, tabletMessageStyles, errorMessageStyles } from './todoInfo.styles';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import todoSerivce from '~shared/services/todo.service';
+import { todoService } from '~shared/services/todo.service';
 import { validateText, validateTitle } from '~shared/services/validation.service';
 import FormField from '~shared/components/field/field.component';
 import { ROUTER_KEYS } from '~shared/keys';
@@ -39,19 +39,19 @@ const TodoInfo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
   const [messages, setMessages] = React.useState([]);
   const { pathname } = useLocation();
   const todoId = pathname.split('/')[2];
-  const defaultValues =  {
+  const defaultValues = React.useMemo(() => ({
     title: todo?.title || '',
     text: todo?.text || '',
     isCompleted: todo?.isCompleted || false,
     isPrivate: todo?.isPprivate || false,
-  };
+  }), []);
   const { register, handleSubmit, clearErrors, formState: { errors } } = useForm<Form>({ defaultValues });
   const getInfo = async() => {
     setMessages([]);
     setIsTodoLoading(true);
 
     try {
-      const { todo, message } = await todoSerivce.getTodoById.call(todoSerivce, { id: todoId });
+      const { todo, message } = await todoService.getTodoById.call(todoService, { id: todoId });
 
       if (!todo) {
         setMessages([message])
@@ -70,7 +70,7 @@ const TodoInfo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
     setIsTodoLoading(true);
 
     try {
-      const { deletedTodo, message } = await todoSerivce.deleteTodo.call(todoSerivce, { id: todo?.id });
+      const { deletedTodo, message } = await todoService.deleteTodo.call(todoService, { id: todo?.id });
 
       setMessages([message]);
 
@@ -89,8 +89,8 @@ const TodoInfo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
     setIsTodoLoading(true);
 
     try {
-      const { updatedTodo, message } = await todoSerivce.updateTodo.call(
-        todoSerivce,
+      const { updatedTodo, message } = await todoService.updateTodo.call(
+        todoService,
         { id: todo?.id, title: data.title, text: data.text, isCompleted: data.isCompleted, isPrivate: data.isPrivate },
       );
 

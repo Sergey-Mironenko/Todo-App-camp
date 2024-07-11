@@ -5,15 +5,20 @@ class TodoService extends HttpSerivce {
     super();
   }
 
-  async getAllTodos() {
-    const response = await this.get({
-      url: 'api/todos/all',
+  async getAllTodos(fields, query = '') {
+    this.interceptors();
+
+    const response = await this.post({
+      url: query ? `api/todos/filter?${query}` : 'api/todos/all',
+      data: {...fields},
     });
 
     return response.data;
   }
 
   async getTodoById(fields) {
+    this.interceptors();
+
     const response = await this.post({
       url: 'api/todos/find',
       data: {...fields},
@@ -23,6 +28,8 @@ class TodoService extends HttpSerivce {
   }
 
   async createTodo(fields) {
+    this.interceptors();
+
     const response = await this.put({
       url: 'api/todos/create',
       data: {...fields},
@@ -32,6 +39,8 @@ class TodoService extends HttpSerivce {
   }
 
   async updateTodo(fields) {
+    this.interceptors();
+
     const response = await this.patch({
       url: 'api/todos/update',
       data: {...fields},
@@ -41,6 +50,8 @@ class TodoService extends HttpSerivce {
   }
 
   async deleteTodo(fields) {
+    this.interceptors();
+    
     const response = await this.delete({
       url: 'api/todos/delete',
       data: {...fields},
@@ -50,5 +61,5 @@ class TodoService extends HttpSerivce {
   }
 }
 
-export const todoSerivce = new TodoService();
-export default todoSerivce;
+export const todoService = new TodoService();
+export default TodoService;

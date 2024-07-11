@@ -130,11 +130,7 @@ export class UserController {
       return;
     }
 
-    console.log(password)
-
     const resetedUser = await this.userService.resetPassword(verificationToken, password);
-       
-    console.log(resetedUser)
     
     res.send({
       message: 'Successfully reseted',
@@ -145,12 +141,12 @@ export class UserController {
   async updateData(req: Request, res: Response): Promise<void> {
     const {name, email, password } = req.body;
 
-    const user = await this.userService.updateUser(name, email, password);
+    const updatedUser = await this.userService.updateUser(name, email, password);
        
-    if (user) {
+    if (updatedUser) {
       res.send({
         message: 'Successfully reseted',
-        user,
+        updatedUser,
       });
 
       return;

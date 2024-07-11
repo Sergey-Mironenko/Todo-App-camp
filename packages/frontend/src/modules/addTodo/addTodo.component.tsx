@@ -6,7 +6,7 @@ import { useUsersSelector } from '~/hooks/useUsersSelector';
 import { useTodosSelector } from '~/hooks/useTodosSelector';
 
 import { titleStyles, phoneTitleStyles, formStyles, tabletFormStyles, phoneFormStyles, messageStyles, errorMessageStyles, phoneMessageStyles, tabletMessageStyles } from './addTodo.styles';
-import todoSerivce from '~shared/services/todo.service';
+import { todoService } from '~shared/services/todo.service';
 import FormField from '~shared/components/field/field.component';
 import { validateTitle, validateText } from '~shared/services/validation.service';
 
@@ -26,12 +26,12 @@ const AddTodo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
   const { user } = useUsersSelector();
   const { addTodo, setIsTodoLoading } = useTodosSelector();
   const [messages, setMessages] = React.useState([]);
-  const defaultValues = {
+  const defaultValues = React.useMemo(() => ({
     title: '',
     text: '',
     isCompleted: false,
     isPrivate: false,
-  }; 
+  }), []); 
   const { register, handleSubmit, clearErrors, formState: { errors } } = useForm<Form>({ defaultValues });
 
   const handleAdd: SubmitHandler<Form> = async(data) => {
@@ -39,8 +39,8 @@ const AddTodo: React.FunctionComponent<Props> = ({ onPhone, onTablet }) => {
     setIsTodoLoading(true);
 
     try {
-      const { newTodo, message } = await todoSerivce.createTodo.call(
-        todoSerivce,
+      const { newTodo, message } = await todoService.createTodo.call(
+        todoService,
         { title: data.title, text: data.text, userId: user.id, userName: user.name, isCompleted: data.isCompleted, isPrivate: data.isPrivate },
       );
 
