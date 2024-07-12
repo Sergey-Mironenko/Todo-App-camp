@@ -32,7 +32,6 @@ export class TodoController {
   }
 
   async getById(req: Request, res: Response): Promise<void> {	
-    console.log(3)
 	const { entity } = res.locals;
 
 	res.send({
