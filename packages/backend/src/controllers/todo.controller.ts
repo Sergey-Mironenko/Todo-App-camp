@@ -6,28 +6,56 @@ export class TodoController {
   constructor(private todoService: TodoService) {}
 
   async getAllTodo(req: Request, res: Response): Promise<void> {
-	const { id } = req.body;
+	const { id, currentPage, amount } = req.body;
+	const startIndex = currentPage * amount;
+	const endIndex = (currentPage * amount) + amount - 1;
 
-	const todos = await this.todoService.findAll(id);
+	let todos = await this.todoService.findAll(id);
+	let lastPage;
+
+	if (todos) {
+	  lastPage = Math.floor(todos.length / amount);
+
+	  todos = todos.slice(startIndex, endIndex);
+
+	  if (lastPage < currentPage) {
+		lastPage = currentPage;
+	  }
+	}
 
 	res.send({
 	  message: 'OK',
-	  todos
+	  pageFromServer: lastPage,
+	  todosFromServer: todos,
 	});
   }
 
   async getFilteredTodo(req: Request, res: Response): Promise<void> {
-	const { id } = req.body;
+	const { id, currentPage, amount } = req.body;
+	const startIndex = currentPage * amount;
+	const endIndex = (currentPage * amount) + amount - 1;
 	
 	const query = String(req.query.query) || '';
 	const status =  validateStatus(String(req.query.status))
 	const privacy = validatePrivacy(String(req.query.privacy));
 
-	const todos = await this.todoService.findFiltered(id, query, status, privacy);
+	let todos = await this.todoService.findFiltered(id, query, status, privacy);
+	let lastPage;
+
+	if (todos) {
+	  lastPage = Math.floor(todos.length / amount);
+
+	  todos = todos.slice(startIndex, endIndex);
+
+	  if (lastPage < currentPage) {
+		lastPage = currentPage;
+	  }
+	}
 
 	res.send({
 	  message: 'OK',
-	  todos,
+	  pageFromServer: lastPage,
+	  todosFromServer: todos,
 	});
   }
 

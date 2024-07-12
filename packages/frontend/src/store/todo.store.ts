@@ -4,6 +4,8 @@ import { TodoType } from '~shared/services/types';
 interface ITodoStore {
 	todos: TodoType[];
   isTodoLoading: boolean;
+  page: number;
+  setPage: (offset: number) => void;
   setTodos: (offset: TodoType[]) => void;
 	addTodo: (offset: TodoType) => void;
   updateTodo: (offset: TodoType) => void;
@@ -14,11 +16,19 @@ interface ITodoStore {
 export const useTodosStore = create<ITodoStore>((set) => {
   return {
     todos: [],
+    page: 0,
     isTodoLoading: false,
     setTodos: (todos: TodoType[]) => {
       set((state) => {
         return {
           todos,
+        };
+      });
+    },
+    setPage: (page: number) => {
+      set((state) => {
+        return {
+          page,
         };
       });
     },
