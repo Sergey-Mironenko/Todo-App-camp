@@ -1,4 +1,4 @@
-import authMiddlewares from '@/middlewares/auth.middleware';
+import authMiddlewares from '../../middlewares/auth.middleware';
 import { Router } from 'express';
 
 import todoController from '../../controllers/todo.controller';
@@ -6,10 +6,18 @@ import middlewares from '../../middlewares/middlewares';
 
 const todosRouter: Router = Router();
 
-todosRouter.get(
+todosRouter.post(
   '/all',
-  authMiddlewares.authMiddleware,
+  authMiddlewares.authMiddleware.bind(authMiddlewares),
+  middlewares.tryCatch(middlewares.isExist('user')),
   middlewares.tryCatch(todoController.getAllTodo.bind(todoController)),
+);
+
+todosRouter.post(
+  '/filter?:query',
+  authMiddlewares.authMiddleware.bind(authMiddlewares),
+  middlewares.tryCatch(middlewares.isExist('user')),
+  middlewares.tryCatch(todoController.getFilteredTodo.bind(todoController)),
 );
 
 todosRouter.post(

@@ -27,6 +27,50 @@ export default class TodoService {
 	  return null;
   }
 
+  async findFiltered(userId: string, queryTitle: string, queryStatus?: boolean | null, queryPrivacy?: boolean | null): Promise<TodoType[] | null> {
+	const todos = prisma.todo.findMany({
+	  where: {
+		AND: [
+		  {
+			OR: [
+			  {
+				isPprivate: {
+				  equals: false,
+				},
+			  },
+			  {
+				userId: {
+				  equals: userId,
+				},
+			  },
+			]
+		  },
+		  {
+			title: {
+			  contains: queryTitle,
+			}
+		  },
+		  {
+			isPprivate: {
+			  equals: queryPrivacy || (true || false),
+			}
+		  },
+		  {
+			isCompleted: {
+			  equals: queryStatus || (true || false),
+			}
+		  },
+		]
+	  }
+	});
+
+	if (todos) {
+	  return todos;
+	}
+		
+	return null;
+  }
+
   async getById(id: string): Promise<TodoType | null> {
 	const todo = await prisma.todo.findUnique({
 	  where: {

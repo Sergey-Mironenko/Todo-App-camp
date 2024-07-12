@@ -1,3 +1,4 @@
+import { validatePrivacy, validateStatus } from '../utils/validateSearchParams';
 import { Response, Request } from 'express';
 import TodoService from '../services/todo.service';
 
@@ -15,8 +16,22 @@ export class TodoController {
 	});
   }
 
+  async getFilteredTodo(req: Request, res: Response): Promise<void> {
+	const { id } = req.body;
+	
+	const query = String(req.query.query) || '';
+	const status =  validateStatus(String(req.query.status))
+	const privacy = validatePrivacy(String(req.query.privacy));
+
+	const todos = await this.todoService.findFiltered(id, query, status, privacy);
+
+	res.send({
+	  message: 'OK',
+	  todos,
+	});
+  }
+
   async getById(req: Request, res: Response): Promise<void> {	
-    console.log(3)
 	const { entity } = res.locals;
 
 	res.send({

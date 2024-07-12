@@ -15,13 +15,9 @@ userRouter.get(
   middlewares.tryCatch(userController.activateUser.bind(userController))
 );
 
-userRouter.post(
-  '/login',
-  middlewares.authenticate,
-  middlewares.tryCatch(middlewares.validator('validateEmail')),
-  middlewares.tryCatch(middlewares.validator('validatePassword')),
-  middlewares.tryCatch(userController.loginUser.bind(userController)), 
-);
+userRouter.post('/auth', middlewares.tryCatch(middlewares.authenticate()));
+
+userRouter.get('/login/:email', middlewares.tryCatch(userController.loginUser.bind(userController)));
 
 userRouter.post(
   '/verify',
