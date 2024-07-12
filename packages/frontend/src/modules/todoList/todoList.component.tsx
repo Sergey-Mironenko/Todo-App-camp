@@ -31,32 +31,70 @@ type Props = {
 const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
   const [editingTodoId, setEditingTodoId] = React.useState<string | null>(null);
   const { user } = useUsersSelector();
-  const { todos, setTodos, setIsTodoLoading } = useTodosSelector();
+  const { todos, page, setPage, setTodos, setIsTodoLoading } = useTodosSelector();
   const [messages, setMessages] = React.useState([]);
-  const sliderRef = React.useRef(null);
   const { search } = useLocation();
+  const sliderRef = React.useRef(null);
+  const scrollRef = React.useRef(null);
+  const pagesAmount = 10;
+  const scroll = document.querySelector(".phoneList");
+  const scrollListener = (event) => {  
+    scrollRef.current.scrollTop = scroll.getBoundingClientRect().top;
+    loadTodos();
+  }
+
+  const resetPage = () => setPage(0);
 
   const handlePrev = React.useCallback(() => {
     if (!sliderRef.current) return;
+
     sliderRef.current.swiper.slidePrev();
   }, []);
 
   const handleNext = React.useCallback(() => {
+    const lastIndex = todos.length - 1;
+  
     if (!sliderRef.current) return;
+
+    if (sliderRef.current.swiper.activeIndex === lastIndex) {
+      scrollRef.current.activeIndex = lastIndex;
+      loadTodos();
+    }
+
     sliderRef.current.swiper.slideNext();
   }, []);
+
+  const nextPage = () => {
+    setPage(page + 1);
+    loadTodos();
+  };
+
+  const prevPage = () => {
+    if (page !== 0) {
+      setPage(page - 1);
+      loadTodos();
+    }
+  };
 
   const loadTodos = async() => {
     setIsTodoLoading(true);
     setMessages([]);
 
     try {
-      const { todos, message } = await todoService.getAllTodos.call(todoService, { id: user.id }, search && `${search.slice(1)}`);
+      const { todosFromServer, pageFromServer, message } = await todoService.getAllTodos.call(todoService, { id: user.id, currentPage: page, amount: pagesAmount }, search && `${search.slice(1)}`);
 
       setMessages([message]);
 
       if (todos) {
-        setTodos(todos);
+        if (onPhone || onTablet) {
+          setTodos([
+            ...todos,
+            todosFromServer,
+          ]);
+        } else {
+          setTodos(todos);
+          setPage(pageFromServer);
+        }
       }
     } catch (error) {
       setMessages([error.message]);
@@ -66,8 +104,18 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
   };
 
   React.useEffect(() => {
+    resetPage();
+  }, [search]);
+
+  React.useEffect(() => {
     loadTodos();
   }, [search]);
+
+  React.useEffect(() => {
+    scroll.addEventListener("scrollend", scrollListener);
+
+    return () => scroll.removeEventListener("scrollend", scrollListener);
+  }, []);
 
   return (
 	  <>
@@ -98,7 +146,8 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
           <>
             {(onTablet && onPhone) && (
               <div className={classNames(
-                sliderStyles
+                'phoneList',
+                sliderStyles,
               )}>
                 {todos.map(todo => (
                   <TodoPhoneCard
@@ -133,8 +182,6 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
                   spaceBetween={0}
                   slidesPerView={1}
                   ref={sliderRef}
-                  onSlideChange={() => console.log('slide change')}
-                  onSwiper={(swiper) => console.log(swiper)}
                 >
                   
                   {todos.map(todo => (
@@ -165,31 +212,52 @@ const TodoList: React.FunctionComponent<Props> = ({ onTablet, onPhone }) => {
             )}
 
             {(!onPhone && !onTablet) && (
-              <div className={classNames(
-                tableContainerStyles
-              )}>
-                <table className={classNames(
-                  tableStyles
+              <>
+                <div className={classNames(
+                  tableContainerStyles
                 )}>
-                  <thead className={classNames(
-                    tableHeadStyles
+                  <table className={classNames(
+                    tableStyles
                   )}>
-                    <tr className={classNames(
-                      rowStyles
+                    <thead className={classNames(
+                      tableHeadStyles
                     )}>
-                      <th>Name</th>
-                      <th>Title</th>
-                      <th>Completed</th>
-                      <th>Private</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {todos.map(todo => (
-                      <TodoDesctopCard todo={todo} key={todo.id} />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                      <tr className={classNames(
+                        rowStyles
+                      )}>
+                        <th>Name</th>
+                        <th>Title</th>
+                        <th>Completed</th>
+                        <th>Private</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {todos.map(todo => (
+                        <TodoDesctopCard todo={todo} key={todo.id} />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div>
+                  <button
+                    disabled={page === 0}
+                    onClick={prevPage}
+                  >
+                    {'<'}
+                  </button>
+
+                  <div>
+                    {page + 1}
+                  </div>
+
+                  <button
+                    onClick={nextPage}
+                  >
+                    {'>'}
+                  </button>
+                </div>
+              </>
             )}
           </>
         )}
